@@ -1,0 +1,9 @@
+# Bytecode / build
+*.class
+*.jar
+*.log
+
+# Spark / temporary directories
+tmp/
+*.swp
+.DS_Store
