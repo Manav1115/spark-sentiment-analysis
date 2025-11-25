@@ -142,7 +142,7 @@ Open:
 http://localhost:8080
 
 ```
-![Spark UI Screenshot](./bigdata_project/Email-classifier/src/assets/Screenshot 2025-11-25 231159.png)
+![Spark UI Screenshot](./bigdata_project/Email-classifier/src/assets/Screenshot%202025-11-25%20231159.png)
 
 You should see:
 
