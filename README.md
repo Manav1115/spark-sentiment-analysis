@@ -142,8 +142,7 @@ Open:
 http://localhost:8080
 
 ```
-
-![SparkUI-running_job](https://github.com/user-attachments/assets/59c53a1a-6d92-4169-8a11-00d039ebaff2)
+![Spark UI Screenshot](./bigdata_project/Email-classifier/src/assets/Screenshot 2025-11-25 231159.png)
 
 You should see:
 
