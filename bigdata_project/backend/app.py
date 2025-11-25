@@ -17,7 +17,7 @@ os.environ["PYSPARK_DRIVER_PYTHON"] = "/home/kalp/bigdata_project/backend/venv/b
 
 
 # Spark master (inside WSL)
-SPARK_MASTER = "spark://172.23.202.231:7077"
+SPARK_MASTER = "spark://10.10.31.111:7077"
 
 # Model path inside WSL
 MODEL_PATH = "/home/kalp/spam_project/model_spam_nb"
