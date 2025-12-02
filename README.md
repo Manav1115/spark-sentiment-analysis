@@ -1,7 +1,8 @@
 # Distributed Sentiment Analysis System
-## Apache Spark + Flask + Tkinter
+## Apache Spark + Flask + Web Interface
 
 This project implements a distributed sentiment analysis system using Apache Spark for scalable text processing and classification. The system analyzes text data (tweets, reviews, comments) to classify sentiment as positive or negative using a Naive Bayes classifier deployed across a Spark cluster.
+
 
 ----------
 
@@ -11,22 +12,21 @@ This project implements a distributed sentiment analysis system using Apache Spa
 - **Scalable Architecture**: 1 Master + 2 Worker nodes in standalone cluster mode
 - **Machine Learning Pipeline**: PySpark MLlib with Naive Bayes classifier
 - **REST API**: Flask-based backend for prediction requests
-- **Interactive UI**: Tkinter-based frontend for real-time sentiment classification
+- **Web Interface**: User-friendly web frontend for real-time sentiment classification
 - **Parallel Execution**: Demonstrates Big Data principles with distributed workloads
-
 ----------
 
 ## PROJECT STRUCTURE
 ```
 Sentiment-Analysis-Distributed/
 │
-├── dataset.csv              # Training dataset (text, label)
-├── train_model.py           # Model training script (run on Master)
-├── backend.py               # Flask API server
-├── frontend.py              # Tkinter UI application
-├── sentiment_model/         # Trained model directory (generated)
+├── dataset.csv # Training dataset (text, label)
+├── train_model.py # Model training script (run on Master)
+├── backend.py # Flask API server & Web Controller
+├── templates/ # HTML files for Web Interface
+│ └── index.html # (Verify this folder exists in your repo)
+├── sentiment_model/ # Trained model directory (generated)
 ├── README.md
-└── screenshots/
 ```
 
 ----------
@@ -42,8 +42,7 @@ Sentiment-Analysis-Distributed/
 - **Apache Spark 3.0+**
 - **Python 3.8+**
 - **JDK 8 or 11**
-- **Flask** for backend API
-- **Tkinter** for UI (usually comes with Python)
+- **Flask** (for backend & web serving)
 
 ----------
 
@@ -64,8 +63,15 @@ C:\spark\
 Set environment variables:
 ```
 SPARK_HOME = C:\spark
-PATH += C:\spark\bin; C:\spark\sbin
+HADOOP_HOME = C:\hadoop
 ```
+Add to **PATH**
+```
+%SPARK_HOME%\bin
+%SPARK_HOME%\sbin
+%HADOOP_HOME%\bin
+```
+
 
 ### Step 3: Verify Java Installation
 ```bash
@@ -136,19 +142,20 @@ Terminal will show the confirmation like this:-
 ![02-Spark-Master-Deploy](https://github.com/user-attachments/assets/4d2a760f-12a5-4c9d-afaa-fdf643e7813f)
 
 
-Important : 
-Note down the Master URL (something like spark://192.168.43.59:7077)
+**Important** : Go to http://localhost:8080 in your browser. Note down the Master URL.
+It will look like:  spark://192.168.x.x:7077.
 
 ### Step 3: Start Spark Worker (Laptop 2 / Laptop 3)
 
 Run:
 
 ```
-spark-class org.apache.spark.deploy.worker.Worker spark://192.168.43.59:7077
-
+spark-class org.apache.spark.deploy.worker.Worker spark://<MASTER_IP>:7077
 ```
 Terminal will look like this:
 ![03-Spark-Worker-Deploy](https://github.com/user-attachments/assets/15ed485b-6d42-41b6-94de-6fc5a080bcab)
+
+**Example**: spark-class org.apache.spark.deploy.worker.Worker spark://192.168.1.5:7077
 
 
 ### Step 4: Verify Spark UI
@@ -200,22 +207,24 @@ ls sentiment_model/
 python backend.py
 ```
 
-Backend will run at:
-```
-http://10.10.31.111:5000
-```
+### Step 2: Access the Interface
+Open your web browser and go to:
 
-The Flask API communicates with the Spark cluster for predictions.
-
-### Step 2: Launch Frontend UI (Any Machine)
 ```bash
-python frontend.py
+http://localhost:5000
 ```
+(If accessing from a different laptop on the same network, use http://<MASTER_IP>:5000)
 
-**Usage**:
+
+### Step 3 : Analyze Test
 1. Enter text in the input field
 2. Click "Analyze Sentiment"
 3. View classification result (Positive/Negative)
+
+
+### User Interface Preview
+<img width="1303" height="874" alt="image" src="https://github.com/user-attachments/assets/01266235-a941-4b66-9adb-76d26958b7d1" />
+
 
 ----------
 
@@ -243,12 +252,12 @@ python frontend.py
 ## ARCHITECTURE
 ```
 ┌─────────────────┐
-│  Tkinter UI     │ ← User Input
+│   Web Browser   │ ← User Input (HTML/CSS)
 └────────┬────────┘
          │ HTTP Request
          ▼
 ┌─────────────────┐
-│  Flask Backend  │ ← Prediction API
+│  Flask Backend  │ ← API & Web Server
 └────────┬────────┘
          │ Spark Job
          ▼
@@ -261,6 +270,7 @@ python frontend.py
 ┌────────┐ ┌────────┐
 │Worker 1│ │Worker 2│ ← Parallel Processing
 └────────┘ └────────┘
+
 ```
 
 ----------
@@ -272,7 +282,7 @@ python frontend.py
 | Distributed Computing | Apache Spark 3.0 (Standalone Cluster) |
 | Machine Learning | PySpark MLlib (Naive Bayes) |
 | Backend API | Flask |
-| Frontend UI | Tkinter |
+| Frontend UI | HTML/CSS (Web Interface) |
 | Data Processing | Pandas, NumPy |
 | Language | Python 3.8+ |
 
@@ -283,24 +293,23 @@ python frontend.py
 ### Issue: Workers not connecting to Master
 
 **Solution**: 
-- Verify Master URL is correct
-- Check firewall settings (port 7077 should be open)
-- Ensure all machines are on the same network
+- Verify Master URL is correct (spark://...).
+- Check firewall settings (port 7077 should be open).
+- Ensure all machines are on the same Wi-Fi network.
 
 ### Issue: Model training fails
 
 **Solution**:
-- Verify `dataset.csv` exists and has correct format
-- Check Spark worker resources in UI
-- Ensure sufficient memory allocation
+- Verify dataset.csv exists and has correct format.
+- Windows Users: Ensure winutils.exe is present in %HADOOP_HOME%\bin.
+- Ensure sufficient memory allocation in Spark.
 
 ### Issue: Flask API not accessible
 
 **Solution**:
-- Update IP address in `backend.py` to Master node's IP
-- Check if port 5000 is available
-- Verify Spark context is initialized
-
+- Ensure backend.py is running.
+- If accessing from another machine, ensure the Flask app is running with host='0.0.0.0'.
+- Check if port 5000 is blocked by a firewall.
 ----------
 
 ## BASIC COMMANDS REFERENCE
@@ -346,16 +355,15 @@ tail -f $SPARK_HOME/logs/spark-*.out
 
 ## FUTURE ENHANCEMENTS
 
-- Real-time streaming sentiment analysis using Spark Streaming
-- Integration with larger NLP models (BERT, Transformers)
-- Cloud deployment (AWS EMR, Azure HDInsight)
-- Support for multi-class sentiment classification
-- GPU-accelerated processing for deep learning models
-- Web-based dashboard using Streamlit
-- Enterprise-scale analytics pipeline integration
+- **Real-time Streaming**: Implement Spark Streaming for live Twitter/X data analysis.
+- **Advanced NLP Models**: Integrate BERT or RoBERTa transformers for higher accuracy.
+- **Cloud Deployment**: Migrate cluster to AWS EMR or Azure HDInsight for auto-scaling.
+- **Docker Support**: Containerize the Master and Worker nodes to simplify setup (removing the need for manual Java/Winutils installation).
+- **Multi-class Classification**: Expand from Positive/Negative to include Neutral, Angry, and Joyful sentiments.
+- **Advanced Dashboarding**: Replace basic UI with a rich analytics dashboard (using Streamlit or Dash) to visualize sentiment trends over time.
+- **GPU Acceleration**: Leverage NVIDIA Spark RAPIDS for faster model training.
 
 ----------
-
 ## CONCLUSION
 
 This project demonstrates the practical application of distributed computing in NLP tasks. By leveraging Apache Spark's parallel processing capabilities, the system showcases how machine learning workloads can scale across multiple nodes for improved performance and efficiency. The end-to-end implementation—from dataset preparation to live prediction through an interactive UI—provides a foundation for building production-grade sentiment analysis systems in Big Data environments.
@@ -377,7 +385,4 @@ Special thanks to:
 - Social media platforms for dataset sources
 
 ----------
-
-## CONTACT
-
-For questions or issues, please contact the project team through the institution.
+            
